@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 public interface FileConverter {
 
-    boolean supports(String fileExtension);
+    boolean supports(FileType fileType);
 
     byte[] convert(InputStream inputStream) throws Exception;
 }

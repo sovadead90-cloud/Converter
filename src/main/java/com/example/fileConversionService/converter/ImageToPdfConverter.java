@@ -16,10 +16,8 @@ import java.io.InputStream;
 public class ImageToPdfConverter implements FileConverter {
 
     @Override
-    public boolean supports(String fileExtension) {
-        return "jpg".equalsIgnoreCase(fileExtension) ||
-                "jpeg".equalsIgnoreCase(fileExtension) ||
-                "png".equalsIgnoreCase(fileExtension);
+    public boolean supports(FileType fileType) {
+        return FileType.JPG == fileType || FileType.PNG == fileType;
     }
 
     @Override

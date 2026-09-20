@@ -17,8 +17,8 @@ import java.nio.charset.StandardCharsets;
 public class TxtToPdfConverter implements FileConverter {
 
     @Override
-    public boolean supports(String fileExtension) {
-        return "txt".equalsIgnoreCase(fileExtension);
+    public boolean supports(FileType fileType) {
+        return FileType.TXT == fileType;
     }
 
     @Override
@@ -37,8 +37,14 @@ public class TxtToPdfConverter implements FileConverter {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    contentStream.showText(line.replace("\t", "    "));
-                    contentStream.newLineAtOffset(0, -15);
+                    String cleanLine = line.replaceAll("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]", "")
+                            .replace("\t", "    ")
+                            .trim();
+
+                    if (!cleanLine.isEmpty()) {
+                        contentStream.showText(cleanLine);
+                        contentStream.newLineAtOffset(0, -15);
+                    }
                 }
                 contentStream.endText();
             }
@@ -47,4 +53,5 @@ public class TxtToPdfConverter implements FileConverter {
             return baos.toByteArray();
         }
     }
+
 }

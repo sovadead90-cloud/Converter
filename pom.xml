@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<pdfbox.version>3.0.3</pdfbox.version>
+		<minio.version>8.5.7</minio.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -66,7 +67,7 @@
 		<dependency>
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
-			<version>8.5.7</version>
+			<version>${minio.version}</version>
 		</dependency>
 
 		<dependency>

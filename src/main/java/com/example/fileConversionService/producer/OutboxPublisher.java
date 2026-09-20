@@ -19,7 +19,7 @@ public class OutboxPublisher {
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelayString = "${app.outbox.fixed-delay}")
     @Transactional
     public void publishPendingMessages() {
         List<OutboxMessage> pendingMessages = outboxRepository.findByProcessedFalseOrderByIdAsc();

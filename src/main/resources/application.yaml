@@ -31,6 +31,10 @@ spring:
       enable-idempotence: true
       retries: 2147483647
 
+app:
+  outbox:
+    fixed-delay: ${APP_OUTBOX_FIXED_DELAY:1000}
+
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
   accessKey: ${MINIO_ACCESS_KEY:my_secure_minio_admin}

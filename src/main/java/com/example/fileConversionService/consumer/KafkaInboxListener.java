@@ -28,7 +28,7 @@ public class KafkaInboxListener {
             FileConversionCommand command = objectMapper.readValue(messageJson, FileConversionCommand.class);
             fileProcessingService.processEvent(command);
             ack.acknowledge();
-            log.info("Смещение (offset) успешно закоммичено в Kafka для messageId: {}", command.getMessageId());
+            log.info("Смещение (offset) успешно закоммичено в Kafka для messageId: {}", command.messageId());
 
         } catch (Exception e) {
             log.error("Критическая ошибка при обработке сообщения в консюмере. Оффсет НЕ коммитится. Ошибка: {}", e.getMessage());

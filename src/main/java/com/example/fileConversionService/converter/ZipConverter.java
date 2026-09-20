@@ -2,7 +2,7 @@ package com.example.fileConversionService.converter;
 
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -17,20 +17,22 @@ import java.util.zip.ZipInputStream;
 @Component
 public class ZipConverter implements FileConverter {
 
-    private final ConverterRegistry registry;
+    private final ApplicationContext applicationContext;
 
-    public ZipConverter(@Lazy ConverterRegistry registry) {
-        this.registry = registry;
+    public ZipConverter(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
-    public boolean supports(String fileExtension) {
-        return "zip".equalsIgnoreCase(fileExtension);
+    public boolean supports(FileType fileType) {
+        return FileType.ZIP == fileType;
     }
 
     @Override
     public byte[] convert(InputStream inputStream) throws Exception {
         List<byte[]> convertedPdfPieces = new ArrayList<>();
+
+        ConverterRegistry registry = applicationContext.getBean(ConverterRegistry.class);
 
         try (ZipInputStream zis = new ZipInputStream(inputStream)) {
             ZipEntry entry;
@@ -53,7 +55,8 @@ public class ZipConverter implements FileConverter {
                     continue;
                 }
 
-                var internalConverterOpt = registry.getConverter(extension);
+                FileType internalFileType = FileType.fromExtension(extension);
+                var internalConverterOpt = registry.getConverter(internalFileType);
 
                 if (internalConverterOpt.isPresent()) {
                     ByteArrayOutputStream entryBuffer = new ByteArrayOutputStream();

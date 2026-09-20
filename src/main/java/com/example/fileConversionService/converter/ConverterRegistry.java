@@ -14,9 +14,9 @@ public class ConverterRegistry {
         this.converters = converters;
     }
 
-    public Optional<FileConverter> getConverter(String extension) {
+    public Optional<FileConverter> getConverter(FileType fileType) {
         return converters.stream()
-                .filter(converter -> converter.supports(extension))
+                .filter(converter -> converter.supports(fileType))
                 .findFirst();
     }
 }
