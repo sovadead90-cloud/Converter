@@ -2,7 +2,7 @@ package com.example.fileConversionService.converter;
 
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -17,10 +17,10 @@ import java.util.zip.ZipInputStream;
 @Component
 public class ZipConverter implements FileConverter {
 
-    private final ApplicationContext applicationContext;
+    private final ObjectProvider<List<FileConverter>> convertersProvider;
 
-    public ZipConverter(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public ZipConverter(ObjectProvider<List<FileConverter>> convertersProvider) {
+        this.convertersProvider = convertersProvider;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ZipConverter implements FileConverter {
     public byte[] convert(InputStream inputStream) throws Exception {
         List<byte[]> convertedPdfPieces = new ArrayList<>();
 
-        ConverterRegistry registry = applicationContext.getBean(ConverterRegistry.class);
+        List<FileConverter> converters = convertersProvider.getObject();
 
         try (ZipInputStream zis = new ZipInputStream(inputStream)) {
             ZipEntry entry;
@@ -56,14 +56,18 @@ public class ZipConverter implements FileConverter {
                 }
 
                 FileType internalFileType = FileType.fromExtension(extension);
-                var internalConverterOpt = registry.getConverter(internalFileType);
 
-                if (internalConverterOpt.isPresent()) {
+                FileConverter internalConverter = converters.stream()
+                        .filter(c -> c.supports(internalFileType))
+                        .findFirst()
+                        .orElse(null);
+
+                if (internalConverter != null) {
                     ByteArrayOutputStream entryBuffer = new ByteArrayOutputStream();
                     zis.transferTo(entryBuffer);
 
                     try (InputStream entryStream = new ByteArrayInputStream(entryBuffer.toByteArray())) {
-                        byte[] pdfBytes = internalConverterOpt.get().convert(entryStream);
+                        byte[] pdfBytes = internalConverter.convert(entryStream);
                         convertedPdfPieces.add(pdfBytes);
                     }
                 }
