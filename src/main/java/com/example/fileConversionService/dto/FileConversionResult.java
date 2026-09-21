@@ -1,10 +1,12 @@
 package com.example.fileConversionService.dto;
 
+import com.example.fileConversionService.converter.SagaStatus;
+
 import java.util.UUID;
 
 public record FileConversionResult(
         UUID sagaId,
-        String status,
+        SagaStatus status,
         String resultPath,
         String errorMessage
 ) {

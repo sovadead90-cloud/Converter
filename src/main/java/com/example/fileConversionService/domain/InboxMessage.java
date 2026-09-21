@@ -1,5 +1,6 @@
 package com.example.fileConversionService.domain;
 
+import com.example.fileConversionService.converter.SagaStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class InboxMessage {
     @Column(name = "message_id")
     private UUID messageId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private SagaStatus status;
 
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;

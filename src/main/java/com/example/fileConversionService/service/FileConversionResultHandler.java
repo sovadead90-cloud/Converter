@@ -1,5 +1,6 @@
 package com.example.fileConversionService.service;
 
+import com.example.fileConversionService.converter.SagaStatus;
 import com.example.fileConversionService.domain.InboxMessage;
 import com.example.fileConversionService.domain.OutboxMessage;
 import com.example.fileConversionService.dto.FileConversionResult;
@@ -24,49 +25,17 @@ public class FileConversionResultHandler {
     private final ObjectMapper objectMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveSuccessResults(UUID messageId, UUID sagaId, String targetPdfPath) throws Exception {
-        FileConversionResult successResult = new FileConversionResult(
-                sagaId,
-                "SUCCESS",
-                targetPdfPath,
-                null
-        );
-
-        writeToOutbox("file-conversion-results", successResult);
-
+    public void saveResult(UUID messageId, FileConversionResult result) throws Exception {
         InboxMessage inbox = InboxMessage.builder()
                 .messageId(messageId)
-                .status("SUCCESS")
+                .status(result.status())
                 .processedAt(LocalDateTime.now())
                 .build();
         inboxRepository.save(inbox);
+        writeToOutbox("file-conversion-results", result);
     }
 
-    @Transactional
-    public void saveFailedResults(UUID messageId, UUID sagaId, String errorMessage) {
-        try {
-            FileConversionResult failedResult = new FileConversionResult(
-                    sagaId,
-                    "FAILED",
-                    null,
-                    errorMessage
-            );
-
-            writeToOutbox("file-conversion-results", failedResult);
-
-            InboxMessage inboxFailed = InboxMessage.builder()
-                    .messageId(messageId)
-                    .status("FAILED")
-                    .processedAt(LocalDateTime.now())
-                    .build();
-            inboxRepository.save(inboxFailed);
-        } catch (Exception ex) {
-            log.error("Критический сбой транзакции при записи аварийного статуса SAGA в БД для messageId: {}"
-                    , messageId, ex);
-        }
-    }
-
-    private void writeToOutbox(String topic, Object payloadDto) throws Exception {
+    private void writeToOutbox(String topic, FileConversionResult payloadDto) throws Exception {
         String jsonPayload = objectMapper.writeValueAsString(payloadDto);
 
         OutboxMessage outboxMessage = OutboxMessage.builder()

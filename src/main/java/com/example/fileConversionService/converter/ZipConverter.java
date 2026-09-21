@@ -1,8 +1,9 @@
 package com.example.fileConversionService.converter;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -15,13 +16,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @Component
+@RequiredArgsConstructor
 public class ZipConverter implements FileConverter {
 
-    private final ObjectProvider<List<FileConverter>> convertersProvider;
-
-    public ZipConverter(ObjectProvider<List<FileConverter>> convertersProvider) {
-        this.convertersProvider = convertersProvider;
-    }
+    private final List<FileConverter> converters;
 
     @Override
     public boolean supports(FileType fileType) {
@@ -31,8 +29,6 @@ public class ZipConverter implements FileConverter {
     @Override
     public byte[] convert(InputStream inputStream) throws Exception {
         List<byte[]> convertedPdfPieces = new ArrayList<>();
-
-        List<FileConverter> converters = convertersProvider.getObject();
 
         try (ZipInputStream zis = new ZipInputStream(inputStream)) {
             ZipEntry entry;

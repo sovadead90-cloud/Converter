@@ -3,6 +3,7 @@ package com.example.fileConversionService.service;
 import com.example.fileConversionService.converter.FileConverter;
 import com.example.fileConversionService.converter.FileType;
 import com.example.fileConversionService.dto.FileConversionCommand;
+import com.example.fileConversionService.dto.FileConversionResult;
 import com.example.fileConversionService.repository.InboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,6 @@ public class FileProcessingService {
             }
 
             InputStream fileStream = minioService.downloadFile(minioPath);
-
             String extension = minioPath.substring(minioPath.lastIndexOf(".") + 1);
             FileType fileType = FileType.fromExtension(extension);
 
@@ -55,14 +55,31 @@ public class FileProcessingService {
 
             minioService.uploadFile(targetPdfPath, pdfBytes, "application/pdf");
 
-            resultHandler.saveSuccessResults(messageId, sagaId, targetPdfPath);
+            FileConversionResult successResult = new FileConversionResult(
+                    sagaId,
+                    com.example.fileConversionService.converter.SagaStatus.SUCCESS,
+                    targetPdfPath,
+                    null
+            );
+
+            resultHandler.saveResult(messageId, successResult);
 
             log.info("Шаг SAGA [{}] успешно завершен. Результат зафиксирован.", sagaId);
 
         } catch (Exception e) {
             log.error("Ошибка при обработке конвертации файла для SAGA ID [{}]: {}", sagaId, e.getMessage());
-
-            resultHandler.saveFailedResults(messageId, sagaId, e.getMessage());
+            try {
+                FileConversionResult failedResult = new FileConversionResult(
+                        sagaId,
+                        com.example.fileConversionService.converter.SagaStatus.FAILED,
+                        null,
+                        e.getMessage()
+                );
+                resultHandler.saveResult(messageId, failedResult);
+            } catch (Exception dbException) {
+                log.error("Критическая ошибка сохранения аварийного статуса SAGA в БД для messageId: {}",
+                        messageId, dbException);
+            }
         }
     }
 }
