@@ -1,4 +1,4 @@
-package com.example.fileConversionService.converter;
+package com.example.fileConversionService.enums;
 
 import java.util.Arrays;
 

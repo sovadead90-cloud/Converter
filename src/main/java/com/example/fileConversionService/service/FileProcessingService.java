@@ -1,9 +1,10 @@
 package com.example.fileConversionService.service;
 
 import com.example.fileConversionService.converter.FileConverter;
-import com.example.fileConversionService.converter.FileType;
+import com.example.fileConversionService.enums.FileType;
 import com.example.fileConversionService.dto.FileConversionCommand;
 import com.example.fileConversionService.dto.FileConversionResult;
+import com.example.fileConversionService.enums.SagaStatus;
 import com.example.fileConversionService.repository.InboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class FileProcessingService {
 
             FileConversionResult successResult = new FileConversionResult(
                     sagaId,
-                    com.example.fileConversionService.converter.SagaStatus.SUCCESS,
+                    SagaStatus.SUCCESS,
                     targetPdfPath,
                     null
             );
@@ -71,7 +72,7 @@ public class FileProcessingService {
             try {
                 FileConversionResult failedResult = new FileConversionResult(
                         sagaId,
-                        com.example.fileConversionService.converter.SagaStatus.FAILED,
+                        SagaStatus.FAILED,
                         null,
                         e.getMessage()
                 );

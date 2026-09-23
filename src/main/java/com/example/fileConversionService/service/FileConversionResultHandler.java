@@ -1,6 +1,5 @@
 package com.example.fileConversionService.service;
 
-import com.example.fileConversionService.converter.SagaStatus;
 import com.example.fileConversionService.domain.InboxMessage;
 import com.example.fileConversionService.domain.OutboxMessage;
 import com.example.fileConversionService.dto.FileConversionResult;

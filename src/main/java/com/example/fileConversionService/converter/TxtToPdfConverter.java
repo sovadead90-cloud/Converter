@@ -1,5 +1,6 @@
 package com.example.fileConversionService.converter;
 
+import com.example.fileConversionService.enums.FileType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;

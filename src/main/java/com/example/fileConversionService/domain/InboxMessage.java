@@ -1,6 +1,6 @@
 package com.example.fileConversionService.domain;
 
-import com.example.fileConversionService.converter.SagaStatus;
+import com.example.fileConversionService.enums.SagaStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

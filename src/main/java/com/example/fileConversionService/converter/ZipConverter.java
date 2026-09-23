@@ -1,6 +1,6 @@
 package com.example.fileConversionService.converter;
 
-import lombok.AllArgsConstructor;
+import com.example.fileConversionService.enums.FileType;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;

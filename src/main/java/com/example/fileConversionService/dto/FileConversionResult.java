@@ -1,6 +1,6 @@
 package com.example.fileConversionService.dto;
 
-import com.example.fileConversionService.converter.SagaStatus;
+import com.example.fileConversionService.enums.SagaStatus;
 
 import java.util.UUID;
 
